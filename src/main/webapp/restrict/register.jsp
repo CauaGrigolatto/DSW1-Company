@@ -8,6 +8,7 @@
 </head>
 <body>
 	<jsp:include page="../includes/nav-menu.html" />
+	<jsp:include page="../includes/messages.jsp" />
 	
 	<h1>Registration Form</h1>
 	

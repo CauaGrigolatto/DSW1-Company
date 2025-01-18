@@ -46,7 +46,8 @@ class UserCommand implements Command {
 		try {
 			User user = toUser(req);
 			checkUser(user);
-			userDAO.insert(user);	
+			userDAO.insert(user);
+			req.setAttribute("successMessage", "Usuário inserido com sucesso.");
 		}
 		catch(RuntimeException e) {
 			req.setAttribute("errorMessage", e.getMessage());
