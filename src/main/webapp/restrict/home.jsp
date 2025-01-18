@@ -7,6 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
+	<jsp:include page="../includes/nav-menu.html" />
+
 	<h1>Home Page</h1>
 </body>
 </html>

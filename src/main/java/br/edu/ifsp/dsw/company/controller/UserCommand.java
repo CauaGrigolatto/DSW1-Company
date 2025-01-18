@@ -24,6 +24,9 @@ class UserCommand implements Command {
 		if ("login".equals(action)) {
 			return login(req);
 		}
+		else if ("register".equals(action)) {
+			return register(req);
+		}
 		
 		return null;
 	}
@@ -37,6 +40,33 @@ class UserCommand implements Command {
 		}
 		
 		return "index.jsp";
+	}
+	
+	private String register(HttpServletRequest req) {
+		try {
+			User user = toUser(req);
+			checkUser(user);
+			userDAO.insert(user);	
+		}
+		catch(RuntimeException e) {
+			req.setAttribute("errorMessage", e.getMessage());
+			System.err.println("Erro ao registrar usuário.");
+			e.printStackTrace();
+		}
+		
+		return "/restrict/register.jsp";
+	}
+	
+	private void checkUser(User user) {
+		if (StringUtils.isBlank(user.getUsername())) {
+			throw new RuntimeException("Username cannot be empty.");
+		}
+		if (StringUtils.isBlank(user.getPassword())) {
+			throw new RuntimeException("Password cannot be empty.");
+		}
+		if (userDAO.existsUsername(user.getUsername())) {
+			throw new RuntimeException("Username is already being used.");
+		}
 	}
 	
 	private HttpSession createSession(User user, HttpServletRequest request) {

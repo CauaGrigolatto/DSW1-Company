@@ -12,6 +12,7 @@ public class UserDAOImpl implements UserDAO {
 	
 	private final String INSERT = "INSERT INTO users(username, identifier) VALUES (?,?)";
 	private final String GET_BY_CREDENTIALS = "SELECT * FROM users WHERE username = ? AND identifier = ?";
+	private final String EXISTS_LOGIN = "SELECT user_id FROM users WHERE username = ?";
 	
 	public UserDAOImpl(Connection conn) {
 		this.conn = conn;
@@ -47,4 +48,21 @@ public class UserDAOImpl implements UserDAO {
 			return false;
 		}
 	}
+
+	@Override
+	public boolean existsUsername(String username) {
+		try {
+			PreparedStatement stmt = conn.prepareStatement(EXISTS_LOGIN);
+			stmt.setString(1, username);
+			ResultSet result = stmt.executeQuery();
+			return result.next();
+		}
+		catch(Throwable t) {
+			System.err.println("Erro ao procurar username");
+			t.printStackTrace();
+			return false;
+		}
+	}
+	
+	
 }
