@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-class UserCommand implements Command {
+class UserCommand implements Command, SessionManager {
 	private UserDAO userDAO;
 	
 	UserCommand() {
@@ -19,16 +19,26 @@ class UserCommand implements Command {
 	
 	@Override
 	public String execute(HttpServletRequest req, HttpServletResponse resp) {
-		String action = req.getParameter("action");
-		
-		if ("login".equals(action)) {
-			return login(req);
+		try {
+			String action = req.getParameter("action");
+			HttpSession session = req.getSession(false);
+			
+			if ("login".equals(action)) {
+				return login(req);
+			}
+			else if ("register".equals(action)) {
+				checkSession(session);
+				return register(req);
+			}
+			else if ("logout".equals(action)) {
+				return logout(req);
+			}			
 		}
-		else if ("register".equals(action)) {
-			return register(req);
+		catch(Exception e) {
+			System.err.println("Access denied.");
 		}
 		
-		return null;
+		return "/index.jsp";
 	}
 	
 	private String login(HttpServletRequest req) {
@@ -58,6 +68,11 @@ class UserCommand implements Command {
 		return "/restrict/register.jsp";
 	}
 	
+	private String logout(HttpServletRequest req) {
+		removeSession(req);
+		return "/index.jsp";
+	}
+	
 	private void checkUser(User user) {
 		if (StringUtils.isBlank(user.getUsername())) {
 			throw new RuntimeException("Username cannot be empty.");
@@ -70,12 +85,29 @@ class UserCommand implements Command {
 		}
 	}
 	
-	private HttpSession createSession(User user, HttpServletRequest request) {
+	@Override
+	public void removeSession(HttpServletRequest req) {
+		var session = req.getSession(false);
+		
+		if (session != null) {
+			session.invalidate();
+		}
+	}
+	
+	@Override
+	public HttpSession createSession(User user, HttpServletRequest request) {
 		HttpSession session = request.getSession(true);
 		session.setAttribute("username", user.getUsername());
 		return session;
 	}
 	
+	@Override
+	public void checkSession(HttpSession session) throws Exception {
+		if (session == null || session.getAttribute("username") == null) {
+			throw new Exception("Access denied.");
+		}
+	}
+
 	private User toUser(HttpServletRequest req) {
 		String idStr = req.getParameter("id");
 		Integer id = StringUtils.isNotBlank(idStr) ? Integer.parseInt(idStr) : null;
