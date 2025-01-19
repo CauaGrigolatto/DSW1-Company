@@ -2,6 +2,7 @@
 <%@page import="java.util.List"%>
 <%@page import="br.edu.ifsp.dsw.company.model.entity.Order"%>
 <%@page import="org.apache.commons.collections4.CollectionUtils"%>
+<%@page import="org.apache.tomcat.jakartaee.commons.lang3.StringUtils"%>
 
 <!DOCTYPE html>
 <html>
@@ -12,11 +13,18 @@
 <body>
 	<jsp:include page="../includes/nav-menu.html" />
 
+	<%
+		String client = (String) request.getParameter("client");
+		if (StringUtils.isEmpty(client)) client = "";
+	%>
+
 	<h1>Orders</h1>
 	
-	<form action="">
+	<form action="/company/controller" method="GET">
+		<input type="hidden" name="targetCommand" value="OrderCommand">
+		<input type="hidden" name="action" value="filter">
 		<label for="client">Search order by client</label>
-		<input type="text" id="client" name="client">
+		<input type="text" id="client" name="client" value="<%= client %>">
 		<button>Search</button>
 	</form>
 	

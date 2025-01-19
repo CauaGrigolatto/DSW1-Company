@@ -33,7 +33,7 @@ class OrderCommand extends SessionChecker implements Command {
 			if ("create".equals(action)) {
 				return createOrder(req);
 			}	
-			else if ("orders".equals(action)) {
+			else if ("orders".equals(action) || "filter".equals(action)) {
 				return getOrders(req);
 			}
 			else if ("myOrders".equals(action)) {
@@ -57,7 +57,16 @@ class OrderCommand extends SessionChecker implements Command {
 	}
 	
 	private String getOrders(HttpServletRequest req) {
-		req.setAttribute("orders", orderDAO.getAll());
+		String client = req.getParameter("client");
+		
+		if (StringUtils.isBlank(client)) {
+			req.setAttribute("orders", orderDAO.getAll());			
+		}
+		else {
+			req.setAttribute("orders", orderDAO.searchByClient(client));
+			req.setAttribute("client", client);
+		}
+		
 		return "/restrict/orders.jsp";
 	}
 	

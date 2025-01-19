@@ -11,4 +11,5 @@ public interface OrderDAO {
 	Order getById(Integer id);
 	List<Order> getAll();
 	List<Order> getByUser(User user);
+	List<Order> searchByClient(String client);
 }

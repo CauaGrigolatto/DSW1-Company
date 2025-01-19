@@ -15,12 +15,6 @@
 
 	<h1>My orders</h1>
 	
-	<form action="">
-		<label for="client">Search order by client</label>
-		<input type="text" id="client" name="client">
-		<button>Search</button>
-	</form>
-	
 	<%
 		var orders = (List<Order>) request.getAttribute("orders");
 	%>

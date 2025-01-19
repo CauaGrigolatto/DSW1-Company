@@ -23,6 +23,7 @@ public class OrderDAOImpl implements OrderDAO {
 	private final String DELETE = "DELETE FROM orders WHERE order_id = ?";
 	private final String GET_ALL = "SELECT * FROM orders";
 	private final String GET_BY_USER = "SELECT * FROM orders WHERE user_id = ?";
+	private final String GET_BY_CLIENT_CONTAINING = "SELECT * FROM orders WHERE client_name LIKE ?";
 	
 	public OrderDAOImpl(Connection conn) {
 		this.conn = conn;
@@ -97,6 +98,36 @@ public class OrderDAOImpl implements OrderDAO {
 		}
 	}
 	
+	@Override
+	public boolean deleteById(Integer id) {
+		try {
+			PreparedStatement stmt = conn.prepareStatement(DELETE);
+			stmt.setInt(1, id);
+			return stmt.execute();
+		}
+		catch(Throwable t) {
+			System.err.println("Erro ao deletar Order.");
+			t.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public List<Order> searchByClient(String client) {
+		try {
+			PreparedStatement stmt = conn.prepareStatement(GET_BY_CLIENT_CONTAINING);
+			stmt.setString(1, '%' + client + '%');
+			ResultSet result = stmt.executeQuery();
+			List<Order> orders = getResultList(result);
+			return orders;
+		}
+		catch(Throwable t) {
+			System.err.println("Erro ao inserir Order.");
+			t.printStackTrace();
+			return Collections.emptyList();
+		}
+	}
+	
 	private List<Order> getResultList(ResultSet result) throws Throwable {
 		try {
 			List<Order> orders = new LinkedList<Order>();
@@ -119,20 +150,4 @@ public class OrderDAOImpl implements OrderDAO {
 			throw t;
 		}
 	}
-
-	@Override
-	public boolean deleteById(Integer id) {
-		try {
-			PreparedStatement stmt = conn.prepareStatement(DELETE);
-			stmt.setInt(1, id);
-			return stmt.execute();
-		}
-		catch(Throwable t) {
-			System.err.println("Erro ao deletar Order.");
-			t.printStackTrace();
-			return false;
-		}
-	}
-	
-	
 }
