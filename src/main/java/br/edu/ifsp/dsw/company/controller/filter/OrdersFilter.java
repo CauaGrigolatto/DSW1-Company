@@ -16,7 +16,7 @@ public class OrdersFilter extends HttpFilter {
 	private final String ORDERS_URL = "/controller?targetCommand=OrderCommand&action=orders";
 	private final String ORDERS_PAGE = "/orders.jsp";
 	
-	private final String MY_ORDERS_URL = "/company/controller?targetCommand=OrderCommand&action=myOrders";
+	private final String MY_ORDERS_URL = "/controller?targetCommand=OrderCommand&action=myOrders";
 	private final String MY_ORDERS_PAGE = "/my-orders.jsp";
 	
 	@Override
@@ -26,10 +26,10 @@ public class OrdersFilter extends HttpFilter {
 		
 		if (StringUtils.isNotBlank(uri)) {
 			if (uri.contains(ORDERS_PAGE)) {
-				response.sendRedirect(ORDERS_URL);
+				response.sendRedirect(request.getContextPath() + ORDERS_URL);
 			}
 			else if (uri.contains(MY_ORDERS_PAGE)) {
-				response.sendRedirect(MY_ORDERS_URL);
+				response.sendRedirect(request.getContextPath() + MY_ORDERS_URL);
 			}
 		}
 		else {			
