@@ -2,10 +2,10 @@ package br.edu.ifsp.dsw.company.controller;
 
 import org.apache.tomcat.jakartaee.commons.lang3.StringUtils;
 
-import br.edu.ifsp.dsw.company.model.connection.ConnectionFactory;
 import br.edu.ifsp.dsw.company.model.dao.UserDAO;
-import br.edu.ifsp.dsw.company.model.dao.UserDAOImpl;
+import br.edu.ifsp.dsw.company.model.dao.UserDAOFactory;
 import br.edu.ifsp.dsw.company.model.entity.User;
+import br.edu.ifsp.dsw.company.model.enums.DataAccessImplementation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -14,7 +14,7 @@ class UserCommand extends SessionChecker implements Command {
 	private UserDAO userDAO;
 	
 	UserCommand() {
-		this.userDAO = new UserDAOImpl(ConnectionFactory.getConnection());
+		this.userDAO = UserDAOFactory.getDAO(DataAccessImplementation.MYSQL);
 	}
 	
 	@Override

@@ -2,13 +2,13 @@ package br.edu.ifsp.dsw.company.controller;
 
 import org.apache.tomcat.jakartaee.commons.lang3.StringUtils;
 
-import br.edu.ifsp.dsw.company.model.connection.ConnectionFactory;
 import br.edu.ifsp.dsw.company.model.dao.OrderDAO;
-import br.edu.ifsp.dsw.company.model.dao.OrderDAOImpl;
+import br.edu.ifsp.dsw.company.model.dao.OrderDAOFactory;
 import br.edu.ifsp.dsw.company.model.dao.UserDAO;
-import br.edu.ifsp.dsw.company.model.dao.UserDAOImpl;
+import br.edu.ifsp.dsw.company.model.dao.UserDAOFactory;
 import br.edu.ifsp.dsw.company.model.entity.Order;
 import br.edu.ifsp.dsw.company.model.entity.User;
+import br.edu.ifsp.dsw.company.model.enums.DataAccessImplementation;
 import br.edu.ifsp.dsw.company.model.exception.OrderNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,8 +19,8 @@ class OrderCommand extends SessionChecker implements Command {
 	private UserDAO userDAO;
 	
 	OrderCommand() {
-		this.orderDAO = new OrderDAOImpl(ConnectionFactory.getConnection());
-		this.userDAO = new UserDAOImpl(ConnectionFactory.getConnection());
+		this.orderDAO = OrderDAOFactory.getDAO(DataAccessImplementation.MYSQL);
+		this.userDAO = UserDAOFactory.getDAO(DataAccessImplementation.MYSQL);
 	}
 	
 	@Override

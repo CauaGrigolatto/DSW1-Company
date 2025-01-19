@@ -4,11 +4,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Home Page</title>
 </head>
 <body>
 	<jsp:include page="../includes/nav-menu.html" />
 
 	<h1>Home Page</h1>
+	
+	<p>Welcome to orders manager</p>
 </body>
 </html>

@@ -7,7 +7,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>My Orders</title>
 </head>
 <body>
 	<jsp:include page="../includes/nav-menu.html" />
