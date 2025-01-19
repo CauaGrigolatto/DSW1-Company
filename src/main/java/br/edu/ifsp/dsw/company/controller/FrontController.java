@@ -10,9 +10,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @WebServlet("/controller")
 public class FrontController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 	private final String PACKAGE_PATH = "br.edu.ifsp.dsw.company.controller.";
 	
 	@Override
+	@SuppressWarnings("deprecation")
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		try {
 			String commandString = req.getParameter("targetCommand");

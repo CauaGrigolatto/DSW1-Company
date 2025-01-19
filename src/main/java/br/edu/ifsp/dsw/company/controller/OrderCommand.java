@@ -31,7 +31,11 @@ class OrderCommand extends SessionChecker implements Command {
 			if ("create".equals(action)) {
 				super.checkSession(session);
 				return createOrder(req);
-			}		
+			}	
+			else if ("orders".equals(action)) {
+				super.checkSession(session);
+				return getOrders(req);
+			}
 		}
 		catch(Exception e) {
 			System.err.println("Access denied.");
@@ -39,11 +43,16 @@ class OrderCommand extends SessionChecker implements Command {
 		
 		return "/index.jsp";
 	}
-	
+
 	private String createOrder(HttpServletRequest req) {
 		Order order = toOrder(req);
 		orderDAO.insert(order);
 		return "/restrict/order-creation.jsp";
+	}
+	
+	private String getOrders(HttpServletRequest req) {
+		req.setAttribute("orders", orderDAO.getAll());
+		return "/restrict/orders.jsp";
 	}
 
 	private Order toOrder(HttpServletRequest req) {

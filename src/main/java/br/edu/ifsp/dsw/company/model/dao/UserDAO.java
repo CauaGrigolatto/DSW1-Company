@@ -6,5 +6,6 @@ public interface UserDAO {
 	boolean insert(User user);
 	boolean existsUsername(String username);
 	boolean authenticate(User user);
+	User getById(Integer id);
 	User getByUsername(String username);
 }

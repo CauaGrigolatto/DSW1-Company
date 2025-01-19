@@ -1,4 +1,4 @@
-package br.edu.ifsp.dsw.company.model.filter;
+package br.edu.ifsp.dsw.company.controller.filter;
 
 import java.io.IOException;
 
