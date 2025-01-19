@@ -30,8 +30,8 @@ class OrderCommand extends SessionChecker implements Command {
 			HttpSession session = req.getSession(false);
 			super.checkSession(session);
 			
-			if ("create".equals(action)) {
-				return createOrder(req);
+			if ("save".equals(action)) {
+				return saveOrder(req);
 			}	
 			else if ("orders".equals(action) || "filter".equals(action)) {
 				return getOrders(req);
@@ -42,6 +42,9 @@ class OrderCommand extends SessionChecker implements Command {
 			else if ("delete".equals(action)) {
 				return deleteOrder(req);
 			}
+			else if ("edit".equals(action)) {
+				return openEditPage(req);
+			}
 		}
 		catch(Exception e) {
 			System.err.println("Access denied.");
@@ -50,10 +53,17 @@ class OrderCommand extends SessionChecker implements Command {
 		return "/index.jsp";
 	}
 
-	private String createOrder(HttpServletRequest req) {
+	private String saveOrder(HttpServletRequest req) {
 		Order order = toOrder(req);
-		orderDAO.insert(order);
-		return "/restrict/order-creation.jsp";
+		
+		if (order.getId() == null) {
+			orderDAO.insert(order);			
+		}
+		else {
+			orderDAO.update(order);
+		}
+		
+		return "/restrict/order-form.jsp";
 	}
 	
 	private String getOrders(HttpServletRequest req) {
@@ -103,6 +113,18 @@ class OrderCommand extends SessionChecker implements Command {
 		}
 		
 		return getUserOrders(req);
+	}
+	
+	private String openEditPage(HttpServletRequest req) {
+		String idStr = req.getParameter("id");
+		
+		if (StringUtils.isNotBlank(idStr)) {
+			Integer id = Integer.parseInt(idStr);
+			Order order = orderDAO.getById(id);
+			req.setAttribute("order", order);
+		}
+		
+		return "/restrict/order-form.jsp";
 	}
 	
 	private void checkDeletionIntegrity(Integer orderId, HttpServletRequest req) {

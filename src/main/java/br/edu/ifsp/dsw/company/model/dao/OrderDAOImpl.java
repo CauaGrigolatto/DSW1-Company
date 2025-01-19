@@ -19,6 +19,8 @@ public class OrderDAOImpl implements OrderDAO {
 	
 	private final String INSERT = 
 			"INSERT INTO orders(order_description, price, client_name, client_address, user_id) VALUES (?,?,?,?,?)";
+	private final String UPDATE =
+			"UPDATE orders SET order_description = ?, price = ?, client_name = ?, client_address = ? WHERE order_id = ?";
 	private final String GET_BY_ID = "SELECT * FROM orders WHERE order_id = ?";
 	private final String DELETE = "DELETE FROM orders WHERE order_id = ?";
 	private final String GET_ALL = "SELECT * FROM orders";
@@ -39,6 +41,24 @@ public class OrderDAOImpl implements OrderDAO {
 			stmt.setString(3, order.getClient());
 			stmt.setString(4, order.getAddress());
 			stmt.setInt(5, order.getUser().getId());
+			return stmt.execute();
+		}
+		catch(Throwable t) {
+			System.err.println("Erro ao inserir Order.");
+			t.printStackTrace();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean update(Order order) {
+		try {
+			PreparedStatement stmt = conn.prepareStatement(UPDATE);
+			stmt.setString(1, order.getDescription());
+			stmt.setDouble(2, order.getPrice());
+			stmt.setString(3, order.getClient());
+			stmt.setString(4, order.getAddress());
+			stmt.setInt(5, order.getId());
 			return stmt.execute();
 		}
 		catch(Throwable t) {

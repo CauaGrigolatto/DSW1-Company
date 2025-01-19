@@ -44,7 +44,7 @@
 			                <td><%= order.getAddress() %></td>
 			                <td><%= order.getUser().getUsername() %></td>
 			                <td>
-			                	<a href="#">Edit</a>
+			                	<a href="/company/controller?targetCommand=OrderCommand&action=edit&id=<%= order.getId() %>"">Edit</a>
 			                	<a href="/company/controller?targetCommand=OrderCommand&action=delete&id=<%= order.getId() %>">Delete</a>
 			                </td>
 			            </tr>
