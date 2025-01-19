@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-class UserCommand implements Command, SessionManager {
+class UserCommand extends SessionChecker implements Command {
 	private UserDAO userDAO;
 	
 	UserCommand() {
@@ -27,7 +27,7 @@ class UserCommand implements Command, SessionManager {
 				return login(req);
 			}
 			else if ("register".equals(action)) {
-				checkSession(session);
+				super.checkSession(session);
 				return register(req);
 			}
 			else if ("logout".equals(action)) {
@@ -85,7 +85,6 @@ class UserCommand implements Command, SessionManager {
 		}
 	}
 	
-	@Override
 	public void removeSession(HttpServletRequest req) {
 		var session = req.getSession(false);
 		
@@ -94,18 +93,10 @@ class UserCommand implements Command, SessionManager {
 		}
 	}
 	
-	@Override
 	public HttpSession createSession(User user, HttpServletRequest request) {
 		HttpSession session = request.getSession(true);
 		session.setAttribute("username", user.getUsername());
 		return session;
-	}
-	
-	@Override
-	public void checkSession(HttpSession session) throws Exception {
-		if (session == null || session.getAttribute("username") == null) {
-			throw new Exception("Access denied.");
-		}
 	}
 
 	private User toUser(HttpServletRequest req) {
