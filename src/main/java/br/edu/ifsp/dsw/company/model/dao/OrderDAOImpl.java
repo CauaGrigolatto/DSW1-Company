@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import br.edu.ifsp.dsw.company.model.entity.Order;
 import br.edu.ifsp.dsw.company.model.entity.User;
 
@@ -17,6 +19,8 @@ public class OrderDAOImpl implements OrderDAO {
 	
 	private final String INSERT = 
 			"INSERT INTO orders(order_description, price, client_name, client_address, user_id) VALUES (?,?,?,?,?)";
+	private final String GET_BY_ID = "SELECT * FROM orders WHERE order_id = ?";
+	private final String DELETE = "DELETE FROM orders WHERE order_id = ?";
 	private final String GET_ALL = "SELECT * FROM orders";
 	private final String GET_BY_USER = "SELECT * FROM orders WHERE user_id = ?";
 	
@@ -40,6 +44,25 @@ public class OrderDAOImpl implements OrderDAO {
 			System.err.println("Erro ao inserir Order.");
 			t.printStackTrace();
 			return false;
+		}
+	}
+
+	@Override
+	public Order getById(Integer id) {
+		try {
+			PreparedStatement stmt = conn.prepareStatement(GET_BY_ID);
+			stmt.setInt(1, id);
+			ResultSet result = stmt.executeQuery();
+			List<Order> orders = getResultList(result);
+			
+			if (CollectionUtils.isEmpty(orders)) return null;
+			
+			return orders.get(0);
+		}
+		catch(Throwable t) {
+			System.err.println("Erro ao obter Order por ID.");
+			t.printStackTrace();
+			return null;
 		}
 	}
 
@@ -96,5 +119,20 @@ public class OrderDAOImpl implements OrderDAO {
 			throw t;
 		}
 	}
+
+	@Override
+	public boolean deleteById(Integer id) {
+		try {
+			PreparedStatement stmt = conn.prepareStatement(DELETE);
+			stmt.setInt(1, id);
+			return stmt.execute();
+		}
+		catch(Throwable t) {
+			System.err.println("Erro ao deletar Order.");
+			t.printStackTrace();
+			return false;
+		}
+	}
+	
 	
 }

@@ -9,6 +9,7 @@ import br.edu.ifsp.dsw.company.model.dao.UserDAO;
 import br.edu.ifsp.dsw.company.model.dao.UserDAOImpl;
 import br.edu.ifsp.dsw.company.model.entity.Order;
 import br.edu.ifsp.dsw.company.model.entity.User;
+import br.edu.ifsp.dsw.company.model.exception.OrderNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -37,6 +38,9 @@ class OrderCommand extends SessionChecker implements Command {
 			}
 			else if ("myOrders".equals(action)) {
 				return getUserOrders(req);
+			}
+			else if ("delete".equals(action)) {
+				return deleteOrder(req);
 			}
 		}
 		catch(Exception e) {
@@ -67,7 +71,51 @@ class OrderCommand extends SessionChecker implements Command {
 		
 		return "/restrict/my-orders.jsp";
 	}
+	
+	private String deleteOrder(HttpServletRequest req) {
+		try {
+			String idStr = req.getParameter("id");
+			
+			if (StringUtils.isNotBlank(idStr)) {
+				Integer id = Integer.parseInt(idStr);
+				
+				checkDeletionIntegrity(id, req);
+				
+				orderDAO.deleteById(id);
+			}			
+		}
+		catch(OrderNotFoundException e) {
+			req.setAttribute("errorMessage", e.getMessage());
+		}
+		catch(Throwable t) {
+			System.err.println("Erro ao deletar Order.");
+			t.printStackTrace();
+			return "/index.jsp";
+		}
+		
+		return getUserOrders(req);
+	}
+	
+	private void checkDeletionIntegrity(Integer orderId, HttpServletRequest req) {
+		String username = super.getSessionUsername(req.getSession(false));
+		
+		if (StringUtils.isBlank(username)) {
+			throw new RuntimeException("Access denied.");
+		}
+		
+		Order order = orderDAO.getById(orderId);
+		
+		if (order == null) {
+			throw new OrderNotFoundException("No order found.");
+		}
 
+		User user = userDAO.getByUsername(username);
+		
+		if (user.getId() != order.getUser().getId()) {
+			throw new RuntimeException("Access denied.");
+		}
+	}
+	
 	private Order toOrder(HttpServletRequest req) {
 		String idStr = req.getParameter("id");
 		Integer id = StringUtils.isNotBlank(idStr) ? Integer.parseInt(idStr) : null;
@@ -80,6 +128,5 @@ class OrderCommand extends SessionChecker implements Command {
 		User user = userDAO.getByUsername(username);
 		return new Order(id, description, price, client, address, user);
 	}
-	
-	
+
 }

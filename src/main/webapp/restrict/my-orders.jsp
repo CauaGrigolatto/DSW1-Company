@@ -11,6 +11,7 @@
 </head>
 <body>
 	<jsp:include page="../includes/nav-menu.html" />
+	<jsp:include page="../includes/messages.jsp" />
 
 	<h1>My orders</h1>
 	
@@ -49,8 +50,8 @@
 			                <td><%= order.getAddress() %></td>
 			                <td><%= order.getUser().getUsername() %></td>
 			                <td>
-			                	<a href="/company/controller?targetCommand=OrderCommand&action=delete?orderId=<%= order.getId() %>">Edit</a>
-			                	<a>Delete</a>
+			                	<a href="#">Edit</a>
+			                	<a href="/company/controller?targetCommand=OrderCommand&action=delete&id=<%= order.getId() %>">Delete</a>
 			                </td>
 			            </tr>
 			<%
