@@ -17,7 +17,8 @@ public class OrderDAOImpl implements OrderDAO {
 	
 	private final String INSERT = 
 			"INSERT INTO orders(order_description, price, client_name, client_address, user_id) VALUES (?,?,?,?,?)";
-	private final String GET_ALL = "SELECT * FROM orders;";
+	private final String GET_ALL = "SELECT * FROM orders";
+	private final String GET_BY_USER = "SELECT * FROM orders WHERE user_id = ?";
 	
 	public OrderDAOImpl(Connection conn) {
 		this.conn = conn;
@@ -36,7 +37,7 @@ public class OrderDAOImpl implements OrderDAO {
 			return stmt.execute();
 		}
 		catch(Throwable t) {
-			System.err.println("Erro ao inserir Order");
+			System.err.println("Erro ao inserir Order.");
 			t.printStackTrace();
 			return false;
 		}
@@ -47,7 +48,34 @@ public class OrderDAOImpl implements OrderDAO {
 		try {
 			PreparedStatement stmt = conn.prepareStatement(GET_ALL);
 			ResultSet result = stmt.executeQuery();
-			
+			List<Order> orders = getResultList(result);
+			return orders;
+		}
+		catch(Throwable t) {
+			System.err.println("Erro ao inserir Order.");
+			t.printStackTrace();
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public List<Order> getByUser(User user) {
+		try {
+			PreparedStatement stmt = conn.prepareStatement(GET_BY_USER);
+			stmt.setInt(1, user.getId());
+			ResultSet result = stmt.executeQuery();
+			List<Order> orders = getResultList(result);
+			return orders;
+		}
+		catch(Throwable t) {
+			System.err.println("Erro ao inserir Order.");
+			t.printStackTrace();
+			return Collections.emptyList();
+		}
+	}
+	
+	private List<Order> getResultList(ResultSet result) throws Throwable {
+		try {
 			List<Order> orders = new LinkedList<Order>();
 			
 			while (result.next()) {
@@ -64,11 +92,9 @@ public class OrderDAOImpl implements OrderDAO {
 			return orders;
 		}
 		catch(Throwable t) {
-			System.err.println("Erro ao inserir Order");
-			t.printStackTrace();
-			return Collections.emptyList();
+			System.err.println("Erro ao recuperar dados.");
+			throw t;
 		}
 	}
-	
 	
 }

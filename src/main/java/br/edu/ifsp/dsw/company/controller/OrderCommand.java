@@ -27,14 +27,16 @@ class OrderCommand extends SessionChecker implements Command {
 		try {
 			String action = req.getParameter("action");
 			HttpSession session = req.getSession(false);
+			super.checkSession(session);
 			
 			if ("create".equals(action)) {
-				super.checkSession(session);
 				return createOrder(req);
 			}	
 			else if ("orders".equals(action)) {
-				super.checkSession(session);
 				return getOrders(req);
+			}
+			else if ("myOrders".equals(action)) {
+				return getUserOrders(req);
 			}
 		}
 		catch(Exception e) {
@@ -53,6 +55,17 @@ class OrderCommand extends SessionChecker implements Command {
 	private String getOrders(HttpServletRequest req) {
 		req.setAttribute("orders", orderDAO.getAll());
 		return "/restrict/orders.jsp";
+	}
+	
+	private String getUserOrders(HttpServletRequest req) {
+		String username = super.getSessionUsername(req.getSession(false));
+		
+		if (StringUtils.isNotBlank(username)) {
+			User user = userDAO.getByUsername(username);
+			req.setAttribute("orders", orderDAO.getByUser(user));
+		}
+		
+		return "/restrict/my-orders.jsp";
 	}
 
 	private Order toOrder(HttpServletRequest req) {
