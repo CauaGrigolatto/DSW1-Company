@@ -76,7 +76,7 @@ CREATE TABLE users (
 INSERT INTO users (username, identifier) VALUES ('admin', 'admin');
 
 CREATE TABLE orders (
-	order_id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  order_id INTEGER PRIMARY KEY AUTO_INCREMENT,
   order_description TEXT NOT NULL,
   price DOUBLE NOT NULL,
   client_name VARCHAR(255) NOT NULL,
